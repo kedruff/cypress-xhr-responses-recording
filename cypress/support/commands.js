@@ -11,6 +11,22 @@
 //
 // -- This is a parent command --
 // Cypress.Commands.add("login", (email, password) => { ... })
+Cypress.Commands.add(`recordResponses`, (cb, url) => {
+  return cy
+    .server({
+      onResponse: response => {
+        const myPaths = parse(response.url).path;
+        cb({
+          url: myPaths,
+          method: response.method,
+          data: response.response.body,
+        });
+      }
+    })
+    .route({ method: 'GET', url: url })
+    .route({ method: 'POST', url: url })
+    .route({ method: 'PUT', url: url });
+});
 //
 //
 // -- This is a child command --
